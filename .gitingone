@@ -1,0 +1,35 @@
+# Python bytecode ve geçici dosyalar
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ortam dosyaları
+.env
+*.env
+
+# Sanal ortam klasörleri
+.venv/
+venv/
+env/
+
+# VSCode gibi editör ayarları
+.vscode/
+.idea/
+
+# Log ve çıktı dosyaları
+*.log
+logs/
+*.out
+
+# Jupyter notebook kontrol dosyaları
+.ipynb_checkpoints/
+
+# Veri çıktıları
+data/*.csv
+data/*.json
+data/*.xlsx
+
+# Sistem dosyaları
+.DS_Store
+Thumbs.db
+
