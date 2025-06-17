@@ -1,7 +1,7 @@
 import logging
 import os
 
-def setup_logger (file_path: str = 'data/app.log', level = logging.INFO):
+def setup_logger (file_path: str = 'logs/app.log', level = logging.INFO):
     """
     Sets up a logger that writes logs to a file and the console.
 
