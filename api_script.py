@@ -44,7 +44,9 @@ def fetch_stock_data(
         'apikey': APIConfig.KEY
     }
 
+    logger.info(f"API request started for symbol: {symbol} (function: {function}, interval: {interval})")
     for attempt in range(1, APIConfig.MAX_RETRIES + 1):
+        logger.info(f"Attempt {attempt}/{APIConfig.MAX_RETRIES} for symbol {symbol}")
         try:
             response = requests.get(APIConfig.BASE_URL, params=params)
             response.raise_for_status()
@@ -57,7 +59,11 @@ def fetch_stock_data(
                 handle_api_errors(data, symbol)
                 return None
 
+            logger.info(f"API response received for {symbol}. Processing data...")
+            # Process the time series data
             df = process_api_data(data[time_series_key])
+
+            logger.info(f"API request completed. Data size: {len(df)} rows")
             return df
 
         except requests.exceptions.RequestException as e:
