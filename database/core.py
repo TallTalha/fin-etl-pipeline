@@ -1,6 +1,7 @@
 # database/core.py
 from sqlalchemy import create_engine, text, types
 from sqlalchemy.types import TypeEngine
+from sqlalchemy.engine import Engine
 import pandas as pd
 from typing import Dict
 import logging
@@ -44,35 +45,44 @@ def get_postgresql_engine(user, password, host, port, database):
         return None
     
 
-def save_to_postgresql(engine, df: pd.DataFrame, table_name: str, columns_type: dict, symbol: str):
+def save_dataframe(engine: Engine,
+                    df: pd.DataFrame,
+                    table_name: str,
+                    columns_type: dict,
+                    if_exists: str = 'append',
+                    index: bool = False,
+                    index_label: str = None,
+                    dtype: dict = None,
+) -> bool:
     """
     Saves a DataFrame to a PostgreSQL database table.
-
     Args:
-        engine: SQLAlchemy engine object
-        df: DataFrame to save
-        table_name: Name of the table to save the DataFrame to
-        columns_type: Dictionary mapping column names to their SQL data types ('name': 'type').
-
+        engine: SQLAlchemy engine object.
+        df: DataFrame to save.
+        table_name: Name of the table to save the DataFrame.
+        columns_type: Dictionary of column types for the DataFrame.
+        if_exists: Behavior when the table already exists ('fail', 'replace', 'append'). Default is 'append'.
+        index: Whether to write row names (index). Default is False.
+        index_label: Column label for index column. Default is None.
+        dtype: Dictionary of column types for the DataFrame. Default is None.
     Returns:
-        None
+        True if successful, False otherwise.
     """
     try:
-        logger.info(f"Writing '{len(df)}' rows to table '{table_name}' for symbol '{symbol}'...")
+        logger.info(f"Writing {len(df)} rows to table '{table_name}'...")
         
         df.to_sql(
             name=table_name,
-            dtype=columns_type,
+            dtype=dtype,
             con=engine,
-            if_exists='append',
-
-            index=True,
-            index_label='timestamp'
+            if_exists=if_exists,
+            index=index,
+            index_label=index_label,
         )
-        logger.info(f"Data for '{symbol}' successfully saved to table '{table_name}'.")
+        logger.info(f"Data successfully saved to table '{table_name}'.")
     
         return True
     except Exception as e:
-        logger.error(f"Error saving '{symbol}' DataFrame to table:'{table_name}'  -> Error: {e}")
+        logger.error(f"Failed to save DataFrame to table '{table_name}'. Error: {e}")
         return False
         
