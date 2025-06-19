@@ -1,0 +1,20 @@
+# docker-compose.yml
+services:
+  db:
+    image: postgres:15
+    container_name: finansal_data_db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=financial_data_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # Its database initialization scripts will be placed in this directory.
+      - ./postgres_setup:/docker-entrypoint-initdb.d
+      # Persisting PostgreSQL data
+      - postgres_data_volume:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_volume:
