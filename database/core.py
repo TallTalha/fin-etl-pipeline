@@ -5,20 +5,10 @@ from sqlalchemy.engine import Engine
 import pandas as pd
 from typing import Dict
 import logging
-from utils.logger import setup_logger
 
 # Setup logger
-logger = setup_logger('logs/database.log', logging.INFO)
+logger = logging.getLogger(__name__) 
 
-# Setup column types for PostgreSQL
-columns_type: Dict[str, TypeEngine] = { 
-    'timestamp': types.TIMESTAMP(timezone=True),
-    'open': types.NUMERIC(precision=10, scale=4),
-    'high': types.NUMERIC(precision=10, scale=4),
-    'low':  types.NUMERIC(precision=10, scale=4),
-    'close': types.NUMERIC(precision=10, scale=4),
-    'volume': types.BIGINT
-}
 
 def get_postgresql_engine(user, password, host, port, database):
     """
@@ -48,7 +38,6 @@ def get_postgresql_engine(user, password, host, port, database):
 def save_dataframe(engine: Engine,
                     df: pd.DataFrame,
                     table_name: str,
-                    columns_type: dict,
                     if_exists: str = 'append',
                     index: bool = False,
                     index_label: str = None,
@@ -85,4 +74,31 @@ def save_dataframe(engine: Engine,
     except Exception as e:
         logger.error(f"Failed to save DataFrame to table '{table_name}'. Error: {e}")
         return False
-        
+
+def get_or_create_stock_id(connection, symbol: str) -> int:
+    """
+    Retrieves or creates a stock ID for the given symbol.
+    Args:
+        connection: SQLAlchemy connection object.
+        symbol: Stock ticker symbol.
+    Returns:
+        Stock ID as an integer.
+    """
+    # Check if the stock ID already exists
+    result = connection.execute(text
+                                ("SELECT id FROM dim_stocks WHERE symbol = :symbol"),
+                                {"symbol": symbol}
+                                ).scalar_one_or_none()
+    if result:
+        logger.debug(f"Symbol '{symbol}' found in dim_stocks with id: {result}.")
+        return result # Stock ID already exists
+    else:
+        logger.info(f"Symbol '{symbol}' not found. Creating new entry in dim_stocks.")
+        # Insert a new stock ID
+        insert_result = connection.execute(text
+                                           ("INSERT INTO dim_stocks (symbol) VALUES (:symbol) RETURNING id"),
+                                           {"symbol": symbol}
+                                           ) 
+        new_stock_id = insert_result.scalar_one() # New stock ID created
+        logger.info(f"New stock ID created for symbol '{symbol}': {new_stock_id}")
+        return new_stock_id

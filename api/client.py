@@ -1,20 +1,18 @@
 import os
 import time
 import logging
+from config.settings import API_KEY, BASE_URL
 from typing import Optional, Dict, Any
 
 import requests
-from dotenv import load_dotenv
 
-from utils.logger import setup_logger
 
-# Configuration
-load_dotenv()
-logger = setup_logger('logs/api_script.log', logging.INFO)
+# Setup logger
+logger = logging.getLogger(__name__) 
 
 class APIConfig:
-    BASE_URL = 'https://www.alphavantage.co/query'
-    KEY = os.getenv('ALPHAVANTAGE_API_KEY')
+    BASE_URL = BASE_URL or 'https://www.alphavantage.co/query'
+    KEY = API_KEY 
     MAX_RETRIES = 3  # maximum number of retries for API requests
     RETRY_DELAY = 5  # seconds
     RATE_LIMIT = 25  # requests per day

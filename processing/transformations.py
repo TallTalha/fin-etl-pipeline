@@ -6,7 +6,7 @@ import logging
 import os
 
 # Setup logger
-logger = setup_logger('logs/transformations.log', logging.INFO)
+logger = logging.getLogger(__name__) 
 
 def process_api_data(time_series_data: Dict[str, Any]) -> pd.DataFrame:
     """Converts API time series data to DataFrame and cleans it."""
