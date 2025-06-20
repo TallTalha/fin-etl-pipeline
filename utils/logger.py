@@ -3,10 +3,12 @@ import os
 
 def setup_logger (file_path: str = 'logs/app.log', level = logging.INFO):
     """
-    Sets up a logger that writes logs to a file and the console.
-
-    param file_path: The path of the log file. (default is 'data/app.log')
-    param level: The logging level (default is INFO).
+    Sets up a logger that logs messages to both console and file.
+    Args:
+        file_path (str): Path to the log file.
+        level (int): Logging level (default is logging.INFO).
+    Returns:
+        logging.Logger: Configured logger instance.
     """
     #Ensures the director is exist
     os.makedirs(os.path.dirname(file_path), exist_ok=True)

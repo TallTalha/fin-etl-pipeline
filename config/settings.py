@@ -4,6 +4,21 @@ from dotenv import load_dotenv
 # Loasd environment variables from .env file
 load_dotenv()
 
+# API Parameters
+
+## Basic API Configuration
+API_SYMBOL = os.getenv("ALPHAVANTAGE_API_SYMBOL", "MSFT")
+API_INTERVAL = os.getenv("ALPHAVANTAGE_API_INTERVAL", "1min")
+API_FUNCTION = os.getenv("ALPHAVANTAGE_API_FUNCTION", "TIME_SERIES_INTRADAY")
+API_OUTPUTSIZE = os.getenv("ALPHAVANTAGE_API_OUTPUTSIZE", "compact")
+## Advanced API Configuration
+API_OUTPUTFORMAT = os.getenv("ALPHAVANTAGE_API_OUTPUTFORMAT", "json")
+API_DATATYPE = os.getenv("ALPHAVANTAGE_API_DATATYPE", "csv")
+API_ADJUSTED = os.getenv("ALPHAVANTAGE_API_ADJUSTED", "false")
+API_TIMEZONE = os.getenv("ALPHAVANTAGE_API_TIMEZONE", "US/Eastern")
+API_DATETIMEFORMAT = os.getenv("ALPHAVANTAGE_API_DATETIMEFORMAT", "iso8601")
+
+
 # Postgresql DB Configuration
 DB_USER = os.getenv("POSTGRES_USER", "default_user")
 DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")

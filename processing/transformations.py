@@ -1,7 +1,6 @@
 from datetime import datetime
 import pandas as pd
 from typing import Dict, Any
-from utils.logger import setup_logger
 import logging
 import os
 
@@ -9,7 +8,13 @@ import os
 logger = logging.getLogger(__name__) 
 
 def process_api_data(time_series_data: Dict[str, Any]) -> pd.DataFrame:
-    """Converts API time series data to DataFrame and cleans it."""
+    """
+    Converts API time series data to DataFrame and cleans it.
+    Args:
+        time_series_data: Dictionary containing time series data from the API.
+    Returns:
+        pd.DataFrame: Processed DataFrame with timestamps as index and cleaned column names.
+    """
     df = pd.DataFrame.from_dict(time_series_data, orient='index', dtype=float)
     df.index = pd.to_datetime(df.index)
     df.index.name = 'timestamp'
@@ -20,13 +25,15 @@ def process_api_data(time_series_data: Dict[str, Any]) -> pd.DataFrame:
     
     return df
 
-def save_to_csv(df: pd.DataFrame, symbol: str) -> None:
+def save_to_csv(df: pd.DataFrame, symbol: str) -> None: #Redundant function, but kept for compatibility
     """
     Saves DataFrame to CSV file.
     
     Args:
         df: DataFrame to save
         symbol: Stock ticker symbol for the filename
+    Returns:
+        None
     """
     if df.empty:
         logger.warning(f"No data to save for {symbol}. DataFrame is empty.")

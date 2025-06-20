@@ -60,7 +60,14 @@ def fetch_stock_data(
     return None
 
 def handle_api_errors(data: Dict[str, Any], symbol: str) -> None:
-    """Handles different types of API error responses."""
+    """
+    Handles different types of API error responses.
+    Args:
+        data: API response data
+        symbol: Stock ticker symbol for logging
+    Returns:
+        None
+    """
     if 'Error Message' in data:
         logger.error(f"API error for {symbol}: {data['Error Message']}")
     elif 'Note' in data:
