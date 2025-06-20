@@ -15,3 +15,6 @@ DB_URL = os.getenv("POSTGRES_URL", f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HO
 # API Configuration
 API_KEY = os.getenv("ALPHAVANTAGE_API_KEY")
 BASE_URL = os.getenv("ALPHAVANTAGE_API_URL", "https://www.alphavantage.co/query")
+API_MAX_RETRIES = int(os.getenv("API_MAX_RETRIES", 3))
+API_RETRY_DELAY = int(os.getenv("API_RETRY_DELAY", 5))
+API_RATE_LIMIT_DAILY = int(os.getenv("API_RATE_LIMIT_DAILY", 25))  #  per day

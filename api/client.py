@@ -1,21 +1,14 @@
 import os
 import time
 import logging
-from config.settings import API_KEY, BASE_URL
+from config.settings import API_KEY, BASE_URL, API_MAX_RETRIES, API_RETRY_DELAY
 from typing import Optional, Dict, Any
-
 import requests
 
 
 # Setup logger
 logger = logging.getLogger(__name__) 
 
-class APIConfig:
-    BASE_URL = BASE_URL or 'https://www.alphavantage.co/query'
-    KEY = API_KEY 
-    MAX_RETRIES = 3  # maximum number of retries for API requests
-    RETRY_DELAY = 5  # seconds
-    RATE_LIMIT = 25  # requests per day
 
 def fetch_stock_data(
     symbol: str = 'MSFT',
@@ -37,14 +30,14 @@ def fetch_stock_data(
         'function': function,
         'symbol': symbol,
         'interval': interval,
-        'apikey': APIConfig.KEY
+        'apikey': API_KEY
     }
 
     logger.info(f"API request started for symbol: {symbol} (function: {function}, interval: {interval})")
-    for attempt in range(1, APIConfig.MAX_RETRIES + 1):
-        logger.info(f"Attempt {attempt}/{APIConfig.MAX_RETRIES} for symbol {symbol}")
+    for attempt in range(1, API_MAX_RETRIES + 1):
+        logger.debug(f"Attempt {attempt}/{API_MAX_RETRIES} for symbol {symbol}")
         try:
-            response = requests.get(APIConfig.BASE_URL, params=params)
+            response = requests.get(BASE_URL, params=params)
             response.raise_for_status()
             data = response.json()
 
@@ -60,8 +53,8 @@ def fetch_stock_data(
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed (attempt {attempt}): {str(e)}")
-            if attempt < APIConfig.MAX_RETRIES:
-                time.sleep(APIConfig.RETRY_DELAY)
+            if attempt < API_MAX_RETRIES:
+                time.sleep(API_RETRY_DELAY)
     
     logger.error(f"Max retries reached for {symbol}")
     return None
